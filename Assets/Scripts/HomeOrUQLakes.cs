@@ -14,17 +14,22 @@ public class HomeOrUQLakes : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        var UseHomeCoordinates = GameObject
-            .FindGameObjectWithTag("CoordinatesManager")
-            .GetComponent<CoordinatesManager>()
-            .UseHomeCoordinates;
+        UpdatePlaceAtLocation();
+    }
+
+    public void UpdatePlaceAtLocation()
+    {
+        var useHomeCoordinates = GameObject
+            .FindGameObjectWithTag("StateManager")
+            .GetComponent<EnvironmentManager>()
+            .useHomeCoordinates;
         // If PlaceAtLocation component is not set, assume this component belongs to a GameObject with one.
         placeAtLocation ??= gameObject.GetComponent<PlaceAtLocation>();
         // Update the GameObject's real-world location.
         placeAtLocation.Location = new Location()
         {
-            Latitude = UseHomeCoordinates ? HomeLatitude : UQLakesLatitude,
-            Longitude = UseHomeCoordinates ? HomeLongitude : UQLakesLongitude,
+            Latitude = useHomeCoordinates ? HomeLatitude : UQLakesLatitude,
+            Longitude = useHomeCoordinates ? HomeLongitude : UQLakesLongitude,
             Altitude = 0,
             AltitudeMode = AltitudeMode.GroundRelative
         };

@@ -7,8 +7,7 @@ using UnityEngine.UI;
 
 public class SpeechManager : MonoBehaviour
 {
-    public string text;
-    public Text uiText;
+    public Text DebugSpeechRecognitionText;
     public UnityEvent PermissionGranted;
     public UnityEvent PermissionNotGranted;
     public UnityEvent SpeechRecognitionFinished;
@@ -16,8 +15,11 @@ public class SpeechManager : MonoBehaviour
     public UnityEvent TextToSpeechConversionCompleted;
     public UnityEvent SpeechRecognitionUpdated;
 
+    private UIManager uIManager;
+
     void Start()
     {
+        uIManager = GetComponent<UIManager>();
         SpeechRecognitionBridge.setUnityGameObjectNameAndMethodName(
             gameObject.name,
             "SpeechCallback"
@@ -35,6 +37,7 @@ public class SpeechManager : MonoBehaviour
         else if (message.Equals("PermissionNotGranted"))
         {
             PermissionNotGranted?.Invoke();
+            SpeechRecognitionBridge.requestMicPermission();
         }
         else if (message.Equals("SpeechRecognitionFinished"))
         {
@@ -51,8 +54,10 @@ public class SpeechManager : MonoBehaviour
         else
         {
             SpeechRecognitionUpdated?.Invoke();
-            uiText.text = message;
+            uIManager.RecordingText.text = message;
+            return;
         }
+        DebugSpeechRecognitionText.text = message;
     }
 
     public void StartSpeechToText()
@@ -62,7 +67,7 @@ public class SpeechManager : MonoBehaviour
 
     public void StartTextToSpeech()
     {
-        SpeechRecognitionBridge.textToSpeech(uiText.text, 0);
+        SpeechRecognitionBridge.textToSpeech(uIManager.RecordingText.text, 0);
     }
 
     public void UnmuteSpeakers()
@@ -73,9 +78,5 @@ public class SpeechManager : MonoBehaviour
     public void RequestMicPermission()
     {
         SpeechRecognitionBridge.requestMicPermission();
-    }
-
-    public void SetText(string text) {
-        this.text = text;
     }
 }
